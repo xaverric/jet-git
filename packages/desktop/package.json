@@ -1,0 +1,16 @@
+{
+  "name": "@jet-git/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@jet-git/core": "0.1.0"
+  },
+  "devDependencies": {
+    "electron": "44.9.0"
+  }
+}

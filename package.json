@@ -1,0 +1,13 @@
+{
+  "name": "jet-git",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "node --test packages/git-core/test/*.test.js",
+    "start": "npm run start --workspace=@jet-git/desktop"
+  }
+}

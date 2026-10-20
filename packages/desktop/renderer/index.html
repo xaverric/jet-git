@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'" />
+    <title>Jet Git</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="toolbar">
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab" data-tab="git" role="tab">Git <span id="git-count" class="tab-count" hidden></span></button>
+          <button type="button" class="tab active" data-tab="log" role="tab">Log</button>
+        </div>
+        <button type="button" id="host-picker" class="picker">This Mac</button>
+        <button type="button" id="project-picker" class="picker project-picker"><span class="mono">–</span><span class="picker-label">Workspace</span></button>
+        <button type="button" id="repo-picker" class="picker repo-picker"><span class="picker-label">Repositories</span></button>
+        <label class="field combo">
+          <input id="branch" type="text" placeholder="Branch" spellcheck="false" />
+          <button type="button" id="branch-clear" class="clear" hidden aria-label="Clear branch filter">×</button>
+        </label>
+        <label class="field combo">
+          <input id="user" type="text" placeholder="User" spellcheck="false" />
+        </label>
+        <label class="field combo">
+          <input id="date" type="text" placeholder="Date" spellcheck="false" />
+        </label>
+        <label class="field combo">
+          <input id="paths" type="text" placeholder="Paths" spellcheck="false" />
+          <button type="button" id="paths-clear" class="clear" hidden aria-label="Clear path filter">×</button>
+        </label>
+        <label class="field grow">
+          <input id="search" type="text" placeholder="Text or hash" spellcheck="false" />
+        </label>
+        <button type="button" id="open" class="open">Open</button>
+      </header>
+      <div id="scope" class="scope">
+        <span id="scope-branch" class="scope-branch"><span id="scope-name">No branch</span></span>
+        <span id="scope-detail" class="scope-detail"></span>
+        <span class="scope-actions">
+          <button type="button" id="update" class="open" title="Update (⌘T)">Update</button>
+          <button type="button" id="commit-now" class="open" title="Commit (⌘K)">Commit</button>
+          <button type="button" id="push-now" class="open" title="Push (⌘⇧K)">Push</button>
+        </span>
+      </div>
+      <div class="workspace" id="workspace">
+        <section id="editor" class="editor" hidden>
+          <header class="editor-tab">
+            <div class="diff-tools">
+              <button type="button" id="diff-prev-file" class="icon-btn" aria-label="Previous file">↑</button>
+              <span id="diff-file-pos"></span>
+              <button type="button" id="diff-next-file" class="icon-btn" aria-label="Next file">↓</button>
+              <button type="button" id="diff-prev" class="icon-btn" aria-label="Previous difference">▴</button>
+              <button type="button" id="diff-next" class="icon-btn" aria-label="Next difference">▾</button>
+              <span id="editor-title"></span>
+              <span id="diff-count"></span>
+              <button type="button" id="review-export" class="open">Export</button>
+              <button type="button" id="review-commit" class="open">Commit revision</button>
+            </div>
+            <button type="button" id="editor-close" class="clear" aria-label="Close diff">×</button>
+          </header>
+          <div id="editor-path"></div>
+          <div id="editor-body"></div>
+        </section>
+        <div class="editor-splitter" id="editor-splitter" hidden></div>
+        <div class="body">
+        <aside id="branches" class="branches"></aside>
+        <div class="splitter" data-split="branches"></div>
+        <main class="center">
+          <div id="log" class="log" tabindex="0"></div>
+          <div id="git-pane" class="git-pane" hidden>
+            <div class="changes-bar">
+              <span id="changes-branch"></span>
+              <span id="changes-sync"></span>
+              <span id="branch-from" hidden></span>
+              <button type="button" id="branch-from-clear" class="clear" hidden aria-label="Clear branch start">×</button>
+              <label class="field">
+                <input id="new-branch" type="text" placeholder="New branch" spellcheck="false" />
+              </label>
+              <button type="button" id="create-branch" class="open">Create</button>
+              <button type="button" id="pull" class="open">Pull</button>
+              <button type="button" id="push" class="open">Push</button>
+              <button type="button" id="fetch" class="open">Fetch</button>
+              <button type="button" id="stash" class="open">Stash</button>
+              <button type="button" id="stash-pop" class="open">Pop</button>
+            </div>
+            <div id="conflict-bar" class="conflict-bar" hidden>
+              <span id="conflict-label"></span>
+              <button type="button" id="conflict-continue" class="open">Continue</button>
+              <button type="button" id="conflict-abort" class="open">Abort</button>
+            </div>
+            <div id="changes" class="changes"></div>
+            <form id="commit-form" class="commit-box">
+              <textarea id="commit-message" placeholder="Commit message" spellcheck="false"></textarea>
+              <div class="commit-actions">
+                <label class="amend"><input id="amend" type="checkbox" /> Amend</label>
+                <button type="submit" class="open">Commit</button>
+              </div>
+            </form>
+          </div>
+        </main>
+        <div class="splitter" data-split="details"></div>
+        <aside class="details">
+          <header id="detail-title"><span id="detail-name"></span><span id="detail-count"></span></header>
+          <div id="detail"></div>
+          <footer id="commit-preview" hidden></footer>
+        </aside>
+      </div>
+      </div>
+      <footer id="status" class="status"></footer>
+    </div>
+    <div id="browse" class="browse" hidden>
+      <div class="browse-card">
+        <header class="browse-head">
+          <h1 id="browse-title">Open project</h1>
+          <button type="button" id="browse-close" class="clear" aria-label="Close">×</button>
+        </header>
+        <div id="browse-path" class="browse-path"></div>
+        <div id="browse-list" class="browse-list"></div>
+        <footer class="browse-foot">
+          <button type="button" id="browse-up" class="open">Up</button>
+          <button type="button" id="browse-open" class="open">Open this folder</button>
+        </footer>
+      </div>
+    </div>
+    <div id="ask" class="browse" hidden>
+      <form id="ask-form" class="browse-card ask-card">
+        <header class="browse-head">
+          <h1 id="ask-title">Squash commits</h1>
+          <button type="button" id="ask-close" class="clear" aria-label="Close">×</button>
+        </header>
+        <textarea id="ask-text" spellcheck="false"></textarea>
+        <footer class="browse-foot">
+          <button type="button" id="ask-cancel" class="open">Cancel</button>
+          <button type="submit" class="open">Squash</button>
+        </footer>
+      </form>
+    </div>
+    <div id="settings" class="settings" hidden>
+      <div class="settings-card" role="dialog" aria-labelledby="settings-title">
+        <aside class="settings-nav">
+          <button type="button" class="settings-item active">Appearance</button>
+        </aside>
+        <section class="settings-body">
+          <header class="settings-head">
+            <h1 id="settings-title">Appearance</h1>
+            <button type="button" id="settings-close" class="clear" aria-label="Close settings">×</button>
+          </header>
+          <label class="setting">
+            <span>Theme</span>
+            <select id="setting-theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="system">System</option>
+            </select>
+          </label>
+          <label class="setting">
+            <span>Translucent window</span>
+            <input id="setting-translucent" type="checkbox" />
+          </label>
+          <label class="setting">
+            <span>Text size</span>
+            <select id="setting-font">
+              <option value="11">Small</option>
+              <option value="12">Medium</option>
+              <option value="14">Large</option>
+            </select>
+          </label>
+          <label class="setting">
+            <span>Highlight code by language</span>
+            <input id="setting-syntax" type="checkbox" />
+          </label>
+        </section>
+      </div>
+    </div>
+    <div id="actions" class="browse" hidden>
+      <div class="browse-card action-card" role="dialog" aria-labelledby="actions-title">
+        <header class="browse-head">
+          <h1 id="actions-title">Find action</h1>
+          <button type="button" id="actions-close" class="clear" aria-label="Close">×</button>
+        </header>
+        <input id="action-query" type="text" placeholder="Rebase, pull, push…" spellcheck="false" />
+        <div id="action-list" class="action-list"></div>
+      </div>
+    </div>
+    <div id="suggest" class="suggest" hidden></div>
+    <div id="menu" class="menu" hidden></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
