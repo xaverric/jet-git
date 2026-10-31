@@ -11,6 +11,6 @@
     "@jet-git/core": "0.1.0"
   },
   "devDependencies": {
-    "electron": "44.9.0"
+    "electron": "44.9.1"
   }
 }
